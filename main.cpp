@@ -1,4 +1,7 @@
-
+/*
+Nom:Thomas Toulouse                     CIP:tout3815
+Nom:Canis Christabelle Tchonet Toukam   CIP:tchc0901
+*/
 #include <iostream>
 
 #include "listchain.h"
