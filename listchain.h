@@ -90,6 +90,8 @@ IMPLÉMENTATION
 template <typename TYPE>
 listchain<TYPE>::listchain(size_t max_taille_supernoeud) {
   // implémentez-moi
+  max_taille = max_taille_supernoeud;
+  debut = fin = nullptr;
 }
 
 /**
@@ -97,13 +99,25 @@ listchain<TYPE>::listchain(size_t max_taille_supernoeud) {
  */
 template <typename TYPE> listchain<TYPE>::~listchain() {
   // implémentez-moi
+  clear();
 }
 
 /**
  * Supprime tous les éléments et remet à l'état d'une liste vide.
  */
 template <typename TYPE> void listchain<TYPE>::clear() {
-  // implémentez-moi
+  while (debut) {
+    SuperNoeud *sn = debut;
+    debut = debut->next;
+
+    while (sn->premier_noeud) {
+      Noeud *n = sn->premier_noeud;
+      sn->premier_noeud = n->next;
+      delete n;
+    }
+    delete sn;
+  }
+  fin = nullptr;
 }
 
 /**
@@ -111,6 +125,20 @@ template <typename TYPE> void listchain<TYPE>::clear() {
  */
 template <typename TYPE> listchain<TYPE>::listchain(const listchain &source) {
   // implémentez-moi
+  while (debut) {
+    SuperNoeud *sn = debut;
+    debut = debut->next;
+
+    // Supprimer tous les Noeuds de ce SuperNoeud
+    while (sn->premier_noeud) {
+      Noeud *n = sn->premier_noeud;
+      sn->premier_noeud = n->next;
+      delete n;
+    }
+
+    delete sn;
+  }
+  fin = nullptr;
 }
 
 /**
@@ -123,6 +151,21 @@ listchain<TYPE> &listchain<TYPE>::operator=(const listchain &src) {
   // NOTE: puisque vous n'avez pas à recopier exactement les mêmes super noeuds
   // Il faut juste que le contenu soit le même, mais pas nécessairement les
   // nbelem des super noeuds. Ceci devrait vous simplifier la tâche.
+
+  if (this != &src) {
+    clear();
+  }
+  SuperNoeud *current = src.debut;
+  while (current) {
+    std::cout << "Node" << std::endl;
+    Noeud *node = current->premier_noeud;
+    while (node) {
+      push_back(node->val);
+      node = node->next;
+    }
+    current = current->next;
+  }
+  return *this;
 }
 
 /**
@@ -131,6 +174,17 @@ listchain<TYPE> &listchain<TYPE>::operator=(const listchain &src) {
 template <typename TYPE> TYPE &listchain<TYPE>::operator[](size_t i) {
   // implémentez-moi
   // aucune vérification de borne à faire
+  SuperNoeud *current = debut;
+  while (current && i >= current->nbelem) {
+    i -= current->nbelem;
+    current = current->next;
+  }
+  Noeud *node = current->premier_noeud;
+
+  while (i--) {
+    node = node->next;
+  }
+  return node->val;
 }
 
 /**
@@ -138,6 +192,14 @@ template <typename TYPE> TYPE &listchain<TYPE>::operator[](size_t i) {
  */
 template <typename TYPE> size_t listchain<TYPE>::size() const {
   // implémentez moi
+  size_t total_size = 0;
+  SuperNoeud *current = debut;
+
+  while (current) {
+    total_size += current->nbelem;
+    current = current->next;
+  }
+  return total_size;
 }
 
 /**
@@ -148,6 +210,33 @@ template <typename TYPE> void listchain<TYPE>::push_front(const TYPE &val) {
   // implémentez moi
   // N'oubliez pas de maintenir les nbelem ( je le dis car j'oubliais toujours
   // :P )
+  Noeud *new_node = new Noeud();
+  new_node->val = val;
+
+  if (!debut) {
+    SuperNoeud *new_super_node = new SuperNoeud();
+
+    new_super_node->premier_noeud = new_node;
+    new_super_node->dernier_noeud = new_node;
+    new_super_node->nbelem = 1;
+    debut = fin = new_super_node;
+
+  } else {
+    if (debut->nbelem < max_taille) {
+      new_node->next = debut->premier_noeud;
+      debut->premier_noeud = new_node;
+      debut->nbelem++;
+    } else {
+      SuperNoeud *new_super_node = new SuperNoeud();
+      new_super_node->premier_noeud = new_node;
+      new_super_node->dernier_noeud = new_node;
+      new_super_node->nbelem = 1;
+
+      new_super_node->next = debut;
+      debut->prev = new_super_node;
+      debut = new_super_node;
+    }
+  }
 }
 
 /**
@@ -156,6 +245,33 @@ template <typename TYPE> void listchain<TYPE>::push_front(const TYPE &val) {
  */
 template <typename TYPE> void listchain<TYPE>::push_back(const TYPE &val) {
   // implémentez-moi
+  Noeud *new_node = new Noeud();
+  new_node->val = val;
+
+  if (!fin) {
+    SuperNoeud *new_super_node = new SuperNoeud();
+
+    new_super_node->premier_noeud = new_node;
+    new_super_node->dernier_noeud = new_node;
+    new_super_node->nbelem = 1;
+    debut = fin = new_super_node;
+
+  } else {
+    if (fin->nbelem < max_taille) {
+      fin->dernier_noeud->next = new_node;
+      fin->dernier_noeud = new_node;
+      fin->nbelem++;
+    } else {
+      SuperNoeud *new_super_node = new SuperNoeud();
+      new_super_node->premier_noeud = new_node;
+      new_super_node->dernier_noeud = new_node;
+      new_super_node->nbelem = 1;
+
+      fin->next = new_super_node;
+      new_super_node->prev = fin;
+      fin = new_super_node;
+    }
+  }
 }
 
 /**
