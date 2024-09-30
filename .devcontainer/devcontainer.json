@@ -1,0 +1,30 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/cpp
+{
+	"name": "C++",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+  // mount nvim config
+
+	"features": {    "ghcr.io/duduribeiro/devcontainer-features/neovim:1": { "version": "stable" }},
+
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	// "features": {},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	 //"postCreateCommand": "git clone https://github.com/Sir-Thom/ift339-TP1.git"
+
+	// Configure tool-specific properties.
+	 "customizations": {
+		 "jetbrains": {
+			 "backend": "CLion"
+		 }
+	 },
+
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
+}
