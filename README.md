@@ -1,4 +1,4 @@
-# TP2 IFT339
+# TP3 IFT339
 
 ## Prérequis
 
