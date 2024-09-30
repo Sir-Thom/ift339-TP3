@@ -90,6 +90,8 @@ IMPLÉMENTATION
 template <typename TYPE>
 listchain<TYPE>::listchain(size_t max_taille_supernoeud) {
   // implémentez-moi
+  max_taille = max_taille_supernoeud;
+  debut = fin = nullptr;
 }
 
 /**
@@ -97,13 +99,29 @@ listchain<TYPE>::listchain(size_t max_taille_supernoeud) {
  */
 template <typename TYPE> listchain<TYPE>::~listchain() {
   // implémentez-moi
+  clear();
 }
 
 /**
  * Supprime tous les éléments et remet à l'état d'une liste vide.
  */
 template <typename TYPE> void listchain<TYPE>::clear() {
-  // implémentez-moi
+  while (debut)
+  {
+    SuperNoeud* sn = debut;
+    debut = debut->next;
+  
+    while (sn->premier_noeud)
+    {
+      Noeud* n = sn->premier_noeud;
+      sn->premier_noeud = n->next;
+      delete n;
+    }
+    delete sn;
+  
+  }
+  fin = nullptr;
+
 }
 
 /**
@@ -111,6 +129,11 @@ template <typename TYPE> void listchain<TYPE>::clear() {
  */
 template <typename TYPE> listchain<TYPE>::listchain(const listchain &source) {
   // implémentez-moi
+  if (this != &src)
+  {
+    clear();
+  }
+  
 }
 
 /**
