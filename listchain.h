@@ -91,7 +91,6 @@ IMPLÉMENTATION
  */
 template <typename TYPE>
 listchain<TYPE>::listchain(size_t max_taille_supernoeud) {
-  // implémentez-moi
   max_taille = max_taille_supernoeud;
   debut = fin = nullptr;
 }
@@ -99,10 +98,7 @@ listchain<TYPE>::listchain(size_t max_taille_supernoeud) {
 /**
  * Destructeur qui désalloue toute la mémoire et nettoie
  */
-template <typename TYPE> listchain<TYPE>::~listchain() {
-  // implémentez-moi
-  clear();
-}
+template <typename TYPE> listchain<TYPE>::~listchain() { clear(); }
 /*
  * Supprime tous les éléments et remet à l'état d'une liste vide.
  */
@@ -125,7 +121,6 @@ template <typename TYPE> void listchain<TYPE>::clear() {
  * Constructeur par copie: met la liste à vide et délègue tout à l'opérateur =
  */
 template <typename TYPE> listchain<TYPE>::listchain(const listchain &source) {
-  // implémentez-moi
   while (debut) {
     SuperNoeud *sn = debut;
     debut = debut->next;
@@ -148,22 +143,15 @@ template <typename TYPE> listchain<TYPE>::listchain(const listchain &source) {
  */
 template <typename TYPE>
 listchain<TYPE> &listchain<TYPE>::operator=(const listchain &src) {
-  // implémentez-moi
   // NOTE: puisque vous n'avez pas à recopier exactement les mêmes super noeuds
   // Il faut juste que le contenu soit le même, mais pas nécessairement les
   // nbelem des super noeuds. Ceci devrait vous simplifier la tâche.
-
   if (this != &src) {
     clear();
   }
   SuperNoeud *current = src.debut;
   while (current) {
-    std::cout << "Node" << std::endl;
-    Noeud *node = current->premier_noeud;
-    while (node) {
-      push_back(node->val);
-      node = node->next;
-    }
+    push_back(current->premier_noeud->val);
     current = current->next;
   }
   return *this;
@@ -173,7 +161,6 @@ listchain<TYPE> &listchain<TYPE>::operator=(const listchain &src) {
  * Retourne le i-ème élément.
  */
 template <typename TYPE> TYPE &listchain<TYPE>::operator[](size_t i) {
-  // implémentez-moi
   // aucune vérification de borne à faire
   SuperNoeud *current = debut;
   while (current && i >= current->nbelem) {
@@ -192,7 +179,6 @@ template <typename TYPE> TYPE &listchain<TYPE>::operator[](size_t i) {
  * Retourne le nombre d'éléments dans votre liste.
  */
 template <typename TYPE> size_t listchain<TYPE>::size() const {
-  // implémentez moi
   size_t total_size = 0;
   SuperNoeud *current = debut;
 
@@ -208,7 +194,6 @@ template <typename TYPE> size_t listchain<TYPE>::size() const {
  * nécessaire.
  */
 template <typename TYPE> void listchain<TYPE>::push_front(const TYPE &val) {
-  // implémentez moi
   // N'oubliez pas de maintenir les nbelem ( je le dis car j'oubliais toujours
   // :P )
   Noeud *new_node = new Noeud();
@@ -244,7 +229,6 @@ template <typename TYPE> void listchain<TYPE>::push_front(const TYPE &val) {
  * nécessaire.
  */
 template <typename TYPE> void listchain<TYPE>::push_back(const TYPE &val) {
-  // implémentez-moi
   Noeud *new_node = new Noeud();
   new_node->val = val;
 
@@ -277,22 +261,22 @@ template <typename TYPE> void listchain<TYPE>::push_back(const TYPE &val) {
  * Enlève l'élément en tête de liste.  Ne vérifie rien.
  */
 template <typename TYPE> void listchain<TYPE>::pop_front() {
-  // implémentez-moi
   if (!debut)
     return;
 
-  // cas 1 retire le premier élément. Si le premier super noeud devient vide
+  // cas 1 retire le premier élément. Si le premier super noeud devient vide et
+  // enlever le supernoeud
   if (debut->nbelem == 1) {
     delete debut->dernier_noeud;
-    SuperNoeud *debutnext = debut->next;
+    SuperNoeud *debut_next_supernode = debut->next;
     delete debut;
-    debut = debutnext;
+    debut = debut_next_supernode;
 
     if (!debut)
       fin = nullptr;
     else
       debut->prev = nullptr;
-  } else {
+  } else { // cas 2 supprime elt dans le super noeud
     Noeud *prevNode = debut->premier_noeud;
     debut->premier_noeud = debut->premier_noeud->next;
     if (prevNode) {
