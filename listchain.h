@@ -10,7 +10,9 @@ Nom:Canis Christabelle Tchonet Toukam   CIP:tchc0901
 #ifndef TP3_LISTCHAIN_H
 #define TP3_LISTCHAIN_H
 
+#include <cstdio>
 #include <iostream>
+#include <ostream>
 
 /**
  * Classe pour une structure de données de liste chaînée de listes chaînées.
@@ -101,8 +103,7 @@ template <typename TYPE> listchain<TYPE>::~listchain() {
   // implémentez-moi
   clear();
 }
-
-/**
+/*
  * Supprime tous les éléments et remet à l'état d'une liste vide.
  */
 template <typename TYPE> void listchain<TYPE>::clear() {
@@ -220,7 +221,6 @@ template <typename TYPE> void listchain<TYPE>::push_front(const TYPE &val) {
     new_super_node->dernier_noeud = new_node;
     new_super_node->nbelem = 1;
     debut = fin = new_super_node;
-
   } else {
     if (debut->nbelem < max_taille) {
       new_node->next = debut->premier_noeud;
@@ -255,7 +255,6 @@ template <typename TYPE> void listchain<TYPE>::push_back(const TYPE &val) {
     new_super_node->dernier_noeud = new_node;
     new_super_node->nbelem = 1;
     debut = fin = new_super_node;
-
   } else {
     if (fin->nbelem < max_taille) {
       fin->dernier_noeud->next = new_node;
@@ -279,6 +278,28 @@ template <typename TYPE> void listchain<TYPE>::push_back(const TYPE &val) {
  */
 template <typename TYPE> void listchain<TYPE>::pop_front() {
   // implémentez-moi
+  if (!debut)
+    return;
+
+  // cas 1 retire le premier élément. Si le premier super noeud devient vide
+  if (debut->nbelem == 1) {
+    delete debut->dernier_noeud;
+    SuperNoeud *debutnext = debut->next;
+    delete debut;
+    debut = debutnext;
+
+    if (!debut)
+      fin = nullptr;
+    else
+      debut->prev = nullptr;
+  } else {
+    Noeud *prevNode = debut->premier_noeud;
+    debut->premier_noeud = debut->premier_noeud->next;
+    if (prevNode) {
+      delete prevNode;
+    }
+    debut->nbelem--;
+  }
 }
 
 /**
@@ -317,10 +338,11 @@ template <typename TYPE> void listchain<TYPE>::pop_back() {
     delete v;
     v_prev->next = nullptr;
 
+    fin->dernier_noeud = v_prev;
+
     fin->nbelem--;
   }
 }
-
 /**
  * Affiche le contenu avec une ligne par sous-tableau.  Un X veut dire "case
  * non-utilisée"
