@@ -121,20 +121,16 @@ template <typename TYPE> void listchain<TYPE>::clear() {
  * Constructeur par copie: met la liste à vide et délègue tout à l'opérateur =
  */
 template <typename TYPE> listchain<TYPE>::listchain(const listchain &source) {
-  while (debut) {
-    SuperNoeud *sn = debut;
-    debut = debut->next;
-
-    // Supprimer tous les Noeuds de ce SuperNoeud
-    while (sn->premier_noeud) {
-      Noeud *n = sn->premier_noeud;
-      sn->premier_noeud = n->next;
-      delete n;
-    }
-
-    delete sn;
-  }
-  fin = nullptr;
+  debut = fin = nullptr;
+  *this = source;
+  while (*this) {
+          Noeud *node = *this->premier_noeud;
+          while (node) {
+              push_back(node->val);
+              node = node->next;
+          }
+          *this  = *this->next;
+      }
 }
 
 /**
@@ -151,7 +147,11 @@ listchain<TYPE> &listchain<TYPE>::operator=(const listchain &src) {
   }
   SuperNoeud *current = src.debut;
   while (current) {
-    push_back(current->premier_noeud->val);
+    Noeud *node = current->premier_noeud;
+    while (node) {
+      push_back(node->val); // Réutilisation du push_back pour copier
+      node = node->next;
+    }
     current = current->next;
   }
   return *this;
@@ -162,6 +162,9 @@ listchain<TYPE> &listchain<TYPE>::operator=(const listchain &src) {
  */
 template <typename TYPE> TYPE &listchain<TYPE>::operator[](size_t i) {
   // aucune vérification de borne à faire
+  if (i >= size()){
+    throw std::out_of_range("Index pas trouver");
+  }
   SuperNoeud *current = debut;
   while (current && i >= current->nbelem) {
     i -= current->nbelem;
@@ -262,8 +265,8 @@ template <typename TYPE> void listchain<TYPE>::push_back(const TYPE &val) {
  */
 template <typename TYPE> void listchain<TYPE>::pop_front() {
   if (!debut)
-    return;
-
+    throw std::underflow_error("Impossible de retirer d'une liste vide");
+  
   // cas 1 retire le premier élément. Si le premier super noeud devient vide et
   // enlever le supernoeud
   if (debut->nbelem == 1) {
@@ -291,9 +294,10 @@ template <typename TYPE> void listchain<TYPE>::pop_front() {
  */
 template <typename TYPE> void listchain<TYPE>::pop_back() {
   // je le fais pour vous
+ if (!fin) // liste vide
+    throw std::underflow_error("Impossible de retirer d'une liste vide");
+  
 
-  if (!fin) // liste vide
-    return;
 
   // cas 1: le dernier super noeud a un seul element -> il va disparaître
   if (fin->nbelem == 1) {
